@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import { SeatSelector } from "./SeatSelector";
 import { TicketSelector } from "./TicketSelector";
+import { createPortal } from "react-dom";
+import { Reservation } from "./Reservation";
 
-export function Details({ activeDay, activeMovie, screenings }) {
+export function Details({ activeDay, activeMovie, screenings, setMovies }) {
   const [activeScreeningId, setactiveScreeningId] = useState();
   const [reservedSeats, setReservedSeats] = useState([]);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const ticketTypes = [
+    { id: 0, type: "Adult", price: 2490, amount: 0 },
+    { id: 1, type: "Student", price: 1990, amount: 0 },
+    { id: 2, type: "Senior", price: 1790, amount: 0 },
+  ];
+  const [selectedTickets, setSelectedTickets] = useState(ticketTypes);
+
   useEffect(() => {
     setactiveScreeningId(null);
     setReservedSeats([]);
@@ -28,7 +37,9 @@ export function Details({ activeDay, activeMovie, screenings }) {
     );
   }
 
-  const sortedScreenings = screenings.sort((a, b) => a.start_time.localeCompare(b.start_time));
+  const sortedScreenings = screenings.sort((a, b) =>
+    a.start_time.localeCompare(b.start_time)
+  );
   const activeScreening = sortedScreenings.find(
     (screening) => screening.id === activeScreeningId
   );
@@ -46,7 +57,10 @@ export function Details({ activeDay, activeMovie, screenings }) {
         <div className="w-3/4">
           <div className="flex flex-col w-3/4 h-3/5">
             <h1 className="font-bold pl-3">{activeMovie.title}</h1>
-            <p className="text-2xl p-3">{activeMovie.release_year} l {activeMovie.genre} l {activeMovie.duration} minutes</p>
+            <p className="text-2xl p-3">
+              {activeMovie.release_year} l {activeMovie.genre} l{" "}
+              {activeMovie.duration} minutes
+            </p>
             <p className="pl-3 pb-3">{activeMovie.description}</p>
           </div>
           <div className="flex gap-2 flex-wrap pl-3 w-3/4">
@@ -56,18 +70,66 @@ export function Details({ activeDay, activeMovie, screenings }) {
                 onClick={() => setactiveScreeningId(screening.id)}
                 className={`p-3 border-2 border-purple-900 hover:bg-purple-900 hover:cursor-pointer rounded-tr-xl rounded-bl-xl
                 transition-all duration-150 ease-in-out select-none mt-2 hover:scale-115
-                ${activeScreeningId === screening.id ? " text-white bg-purple-900" : "bg-black"}`}
+                ${
+                  activeScreeningId === screening.id
+                    ? " text-white bg-purple-900"
+                    : "bg-black"
+                }`}
               >
                 {screening.start_time}
               </p>
             ))}
           </div>
         </div>
-      </div >
-      <div className="flex mt-3">
-        <SeatSelector activeMovie={activeMovie} activeScreeningId={activeScreeningId} activeScreening={activeScreening} reservedSeats={reservedSeats} setReservedSeats={setReservedSeats}/>
-        <TicketSelector totalReservedSeats={reservedSeats.length} reservedSeats={reservedSeats} activeScreening={activeScreening} activeDay={activeDay} activeMovie={activeMovie}/>
       </div>
+      <div className="flex mt-3">
+        <SeatSelector
+          activeMovie={activeMovie}
+          activeScreeningId={activeScreeningId}
+          activeScreening={activeScreening}
+          reservedSeats={reservedSeats}
+          setReservedSeats={setReservedSeats}
+        />
+        <TicketSelector
+          totalReservedSeats={reservedSeats.length}
+          reservedSeats={reservedSeats}
+          activeScreening={activeScreening}
+          activeDay={activeDay}
+          activeMovie={activeMovie}
+          setMovies={setMovies}
+          setReservedSeats={setReservedSeats}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          selectedTickets={selectedTickets}
+          setSelectedTickets={setSelectedTickets}
+          ticketTypes={ticketTypes}
+        />
+      </div>
+      {/* Reservation Modal */}
+      {isModalOpen &&
+        createPortal(
+          <div
+            className="modal-background fixed inset-0 bg-black flex flex-col items-center justify-center z-50 gap-5"
+          >
+            <Reservation
+              totalReservedSeats={reservedSeats.length}
+              reservedSeats={reservedSeats}
+              activeScreening={activeScreening}
+              activeDay={activeDay}
+              activeMovie={activeMovie}
+              selectedTickets={selectedTickets}
+            />
+            <div>
+              <p
+                className="bg-purple-900 text-white px-4 py-2 rounded hover:bg-purple-700 hover:cursor-pointer"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Close
+              </p>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

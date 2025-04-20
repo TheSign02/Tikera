@@ -1,4 +1,5 @@
-import { act, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { Reservation } from "./Reservation";
 
 export function TicketSelector({
   totalReservedSeats = 0,
@@ -6,6 +7,12 @@ export function TicketSelector({
   activeScreening,
   activeDay,
   activeMovie,
+  setMovies,
+  setReservedSeats,
+  setIsModalOpen,
+  selectedTickets,
+  setSelectedTickets,
+  ticketTypes,
 }) {
   if (!activeScreening) {
     return;
@@ -14,13 +21,6 @@ export function TicketSelector({
   if (totalReservedSeats === 0) {
     return <h1 className="p-20 w-4/10">Please pick your seat(s).</h1>;
   }
-
-  const ticketTypes = [
-    { id: 0, type: "Adult", price: 2490, amount: 0 },
-    { id: 1, type: "Student", price: 1990, amount: 0 },
-    { id: 2, type: "Senior", price: 1790, amount: 0 },
-  ];
-  const [selectedTickets, setSelectedTickets] = useState(ticketTypes);
 
   const totalPrice = selectedTickets.reduce(
     (sum, ticket) => sum + ticket.price * ticket.amount,
@@ -44,8 +44,8 @@ export function TicketSelector({
               ...ticket,
               amount:
                 action === "+"
-                  ? ticket.amount + 1 // Increment
-                  : Math.max(ticket.amount - 1, 0), // Decrement, but prevent negative values
+                  ? ticket.amount + 1
+                  : Math.max(ticket.amount - 1, 0),
             }
           : ticket
       )
@@ -54,7 +54,8 @@ export function TicketSelector({
 
   return (
     <div className="w-1/3 ml-5 ">
-      <div className="TICKETS border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] p-5">
+      {/* Tickets */}
+      <div className="border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] p-5">
         {selectedTickets.map((ticket) => {
           return (
             <div className="flex justify-between pb-2" key={ticket.id}>
@@ -104,51 +105,66 @@ export function TicketSelector({
                 ? "hover:cursor-pointer hover:bg-purple-900"
                 : "hover:cursor-not-allowed"
             }`}
+            onClick={() => {
+              if (totalTickets === totalReservedSeats) {
+                // Update the movies state to mark seats as reserved
+                setTimeout(() => {
+                  setMovies((prevMovies) =>
+                    prevMovies.map((movie) =>
+                      movie.id === activeMovie.id
+                  ? {
+                        ...movie,
+                        screenings: movie.screenings.map((screening) =>
+                          screening.id === activeScreening.id
+                        ? {
+                          ...screening,
+                          bookings: [
+                            ...screening.bookings,
+                            ...reservedSeats.map(([row, seat]) => ({
+                              row,
+                              seat,
+                            })),
+                          ],
+                        }
+                              : screening
+                          ),
+                        }
+                        : movie
+                    )
+                  );
+                }, 3000)
+
+                // Open the modal
+                setIsModalOpen(true);
+
+                // Delay state reset to allow modal to render with current data
+                setTimeout(() => {
+                  setReservedSeats([]);
+                  setSelectedTickets(ticketTypes);
+                }, 3000);
+              } else {
+                console.log("Total tickets do not match total reserved seats.");
+              }
+            }}
           >
             <p>Reserve</p>
           </div>
         </div>
       </div>
-      <div className="DIVIDER border-2 border-purple-900 m-3"></div>
-      <div className="SEATS border-3 border-purple-900 rounded-tr-[20px] rounded-bl-[20px] p-5">
-        <p className="text-3xl mb-10 underline decoration-purple-900 font-bold text-center">
-          Your Reservation
-        </p>
-        <div className="flex flex-col text-xl">
-          <p>{activeMovie.title}</p>
-          <p>
-            {activeDay} {activeScreening.start_time}
-          </p>
-        </div>
-        <div className="mt-5 flex justify-around">
-          {selectedTickets.map((ticket) => {
-            return ticket.amount !== 0 ? (
-              <div>
-                <p>
-                  {ticket.amount} x {ticket.type}
-                </p>
-                <p>{ticket.price * ticket.amount} Ft</p>
-              </div>
-            ) : null;
-          })}
-        </div>
-        <p className="mt-5 mb-2">
-          {totalReservedSeats === 1 ? "Your seat:" : "Your seats:"}
-        </p>
-        <div className="flex flex-col gap-1">
-          {reservedSeats.map((reservedSeat, index) => {
-            return (
-              <div className="flex gap-2" key={index}>
-                <p>{index + 1}.</p>
-                <p>Row: {reservedSeat[0]}</p>
-                <p>Column: {reservedSeat[1]}</p>
-              </div>
-            );
-          })}
-        </div>
-        <div>
-          <p className="text-4xl mb-3"></p>
-        </div>
+
+      {/* Divider */}
+      <div className="border-2 border-purple-900 m-3"></div>
+
+      {/* Reservation */}
+      <div>
+        <Reservation
+          totalReservedSeats={totalReservedSeats}
+          reservedSeats={reservedSeats}
+          activeScreening={activeScreening}
+          activeDay={activeDay}
+          activeMovie={activeMovie}
+          selectedTickets={selectedTickets}
+        />
       </div>
     </div>
   );

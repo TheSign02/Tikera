@@ -28,7 +28,7 @@ function App() {
     <MainLayout activeDay={activeDay}
       header={<Days activeDay={activeDay} setActiveDay={setActiveDay} days={days}/>}
       cards={<MovieCards activeDay={activeDay} movies={movies} activeCard={activeCard} setActiveCard={setActiveCard} />}
-      details={<Details activeDay={activeDay} activeMovie={activeMovie} screenings={screenings} movies={movies} />}
+      details={<Details activeDay={activeDay} activeMovie={activeMovie} screenings={screenings} movies={movies} setMovies={setMovies} />}
     ></MainLayout>
   );
 }
