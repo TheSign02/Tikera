@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function MovieCards({ movies, activeDay, activeCard, setActiveCard }) {
+  useEffect(() => {
+    setActiveCard(0);
+  }, [activeDay])
+
   return (
     <>
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap pt-6">
         {movies
           .filter((movie) =>
             movie.screenings?.some(
@@ -14,10 +18,10 @@ export function MovieCards({ movies, activeDay, activeCard, setActiveCard }) {
             return (
               <div
                 key={index}
-                onClick={() => setActiveCard(index)}
-                className={`w-45 h-90 flex flex-col items-center bg-black border-3 border-black rounded-[32px] p-[12px]
-               m-2 transition-all duration-300 ease-in-out hover:bg-purple-800 hover:scale-118 shadow-2xl select-none mt-5 hover:cursor-pointer
-              ${activeCard === index ? "bg-purple-900 border-black" : ""}`}
+                onClick={() => setActiveCard(movie.id)}
+                className={`w-45 h-90 flex flex-col items-center bg-black border-3 border-purple-900 rounded-[32px] p-[12px]
+               m-2 transition-all duration-300 ease-in-out hover:bg-purple-900 hover:scale-115 shadow-2xl select-none mt-5 hover:cursor-pointer
+              ${activeCard === movie.id ? "bg-purple-900" : ""}`}
               >
                 <img
                   className="w-45 h-60 rounded-[20px] object-cover"

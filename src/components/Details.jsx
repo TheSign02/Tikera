@@ -1,29 +1,65 @@
-export function Details({ activeCard, screenings, movies }) {
-  const activeMovie = movies[activeCard];
-  console.log(activeMovie.image);
+import { use, useEffect, useState } from "react";
+import { SeatSelector } from "./SeatSelector";
+import { TicketSelector } from "./TicketSelector";
+
+export function Details({ activeMovie, screenings }) {
+  const [activeScreeningId, setactiveScreeningId] = useState();
+  const [reservedSeats, setReservedSeats] = useState([]);
+  
+  useEffect(() => {
+    setactiveScreeningId(null);
+    setReservedSeats([]);
+  }, [activeMovie]);
+
+  if (!activeMovie) {
+    return (
+      <div className="flex flex-col items-center">
+        <h1 className="pt-30 pb-20">Please pick a movie 🍿</h1>
+        <img
+          className="w-130 h-100 object-cover border-4 border-purple-900 rounded-4xl"
+          src="https://i.giphy.com/6pJNYBYSMFod2.webp"
+          alt="eating popcorn gif"
+        />
+      </div>
+    );
+  }
+
+  const sortedScreenings = screenings.sort((a, b) => a.start_time.localeCompare(b.start_time));
+
   return (
-    <div className="flex border-2 pt-10 p-2">
-      <img
-        className="h-110 w-90 object-cover border-5 border-black rounded-[20px]"
-        src={`/images/${activeMovie.image}`}
-        alt={`${activeMovie.title}`}
-      />
-      <div className="flex flex-col">
-        <h1>{activeMovie.title}</h1>
-        <p className="border-2 w-1/2">{activeMovie.description}</p>
-        <p>{activeMovie.release_year}</p>
-        <div className="flex">
-          {screenings.map((screening, index) => (
-            <p
-              key={index}
-              className={`p-3 border-2 border-black hover:border-white hover:cursor-pointer rounded-tr-xl rounded-bl-xl
-            transition-all duration-300 ease-in-out select-none
-            ${true}`}
-            >
-              {screening.start_time}
-            </p>
-          ))}
+    <div>
+      <div className="flex pt-10 p-2 border-3">
+        <div className="w-1/3">
+          <img
+            className="h-120 w-full object-cover border-5 border-black rounded-[20px]"
+            src={`/images/${activeMovie.image}`}
+            alt={`${activeMovie.title}`}
+          />
         </div>
+        <div className="w-3/4">
+          <div className="flex flex-col w-3/4 h-3/5">
+            <h1 className="font-bold pl-3">{activeMovie.title}</h1>
+            <p className="text-2xl p-3">{activeMovie.release_year} l {activeMovie.genre} l {activeMovie.duration} minutes</p>
+            <p className="pl-3 pb-3">{activeMovie.description}</p>
+          </div>
+          <div className="flex gap-2 flex-wrap pl-3 w-3/4">
+            {sortedScreenings.map((screening, index) => (
+              <p
+                key={index}
+                onClick={() => setactiveScreeningId(screening.id)}
+                className={`p-3 border-2 border-purple-900 hover:bg-purple-900 hover:cursor-pointer rounded-tr-xl rounded-bl-xl
+                transition-all duration-150 ease-in-out select-none mt-2 hover:scale-115
+                ${activeScreeningId === screening.id ? " text-white bg-purple-900" : "bg-black"}`}
+              >
+                {screening.start_time}
+              </p>
+            ))}
+          </div>
+        </div>
+      </div >
+      <div className="flex">
+        <SeatSelector activeMovie={activeMovie} activeScreeningId={activeScreeningId} sortedScreenings={sortedScreenings} reservedSeats={reservedSeats} setReservedSeats={setReservedSeats}/>
+        <TicketSelector totalReservedSeats={reservedSeats.length} reservedSeats={reservedSeats} />
       </div>
     </div>
   );
