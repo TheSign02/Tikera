@@ -2,24 +2,20 @@ import { useState } from "react";
 
 export function SeatSelector({
   activeScreeningId,
-  sortedScreenings,
+  activeScreening,
   reservedSeats,
   setReservedSeats,
 }) {
-  const currentScreening = sortedScreenings.find(
-    (screening) => screening.id === activeScreeningId
-  );
-
   if (!activeScreeningId) {
     return <h1 className="p-20">Please pick a time.</h1>;
   }
 
-  if (!currentScreening) {
+  if (!activeScreening) {
     return <h1>No screening found for the selected time.</h1>;
   }
 
-  const { rows, seatsPerRow } = currentScreening.room;
-  const bookings = currentScreening.bookings || [];
+  const { rows, seatsPerRow } = activeScreening.room;
+  const bookings = activeScreening.bookings || [];
 
   const seatMatrix = Array.from({ length: rows }, (_, rowIndex) =>
     Array.from(
@@ -54,7 +50,7 @@ export function SeatSelector({
   };
 
   return (
-    <div className="border-3 w-6/10 h-200 p-5">
+    <div className="border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] w-6/10 h-200 p-5">
       <div className="flex gap-2 pl-1 pb-5">
         <div>
           <img
@@ -93,22 +89,24 @@ export function SeatSelector({
             const isOccupied = seat === 1;
 
             return (
-              <img
-                key={seatId}
-                src="images/seat-icon.png"
-                alt={`Seat ${rowIndex + 1}-${seatIndex + 1}`}
-                className={`h-13 transition-all duration-50 ${
-                  isOccupied
-                    ? "bg-red-500 cursor-not-allowed opacity-50" // Occupied seat
-                    : isReserved
-                    ? "bg-purple-800 hover:bg-purple-500 cursor-pointer" // Reserved seat
-                    : "bg-green-500 hover:bg-purple-500 cursor-pointer opacity-90" // Free seat
-                }`}
-                draggable="false"
-                onClick={() =>
-                  !isOccupied && seatClickHandler(rowIndex + 1, seatIndex + 1)
-                }
-              />
+              <div>
+                <img
+                  key={seatId}
+                  src="images/seat-icon.png"
+                  alt={`Seat ${rowIndex + 1}-${seatIndex + 1}`}
+                  className={`h-13 transition-all duration-50 ${
+                    isOccupied
+                      ? "bg-red-500 cursor-not-allowed opacity-50" // Occupied seat
+                      : isReserved
+                      ? "bg-purple-800 hover:bg-purple-500 cursor-pointer" // Reserved seat
+                      : "bg-green-500 hover:bg-purple-500 cursor-pointer opacity-90" // Free seat
+                  }`}
+                  draggable="false"
+                  onClick={() =>
+                    !isOccupied && seatClickHandler(rowIndex + 1, seatIndex + 1)
+                  }
+                />
+              </div>
             );
           })}
         </div>

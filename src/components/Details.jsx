@@ -1,8 +1,8 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SeatSelector } from "./SeatSelector";
 import { TicketSelector } from "./TicketSelector";
 
-export function Details({ activeMovie, screenings }) {
+export function Details({ activeDay, activeMovie, screenings }) {
   const [activeScreeningId, setactiveScreeningId] = useState();
   const [reservedSeats, setReservedSeats] = useState([]);
   
@@ -11,12 +11,16 @@ export function Details({ activeMovie, screenings }) {
     setReservedSeats([]);
   }, [activeMovie]);
 
+  useEffect(() => {
+    setReservedSeats([]);
+  }, [activeScreeningId]);
+
   if (!activeMovie) {
     return (
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center ">
         <h1 className="pt-30 pb-20">Please pick a movie 🍿</h1>
         <img
-          className="w-130 h-100 object-cover border-4 border-purple-900 rounded-4xl"
+          className="w-130 h-100 object-cover border-4 border-purple-900 rounded-tr-[60px] rounded-bl-[60px]"
           src="https://i.giphy.com/6pJNYBYSMFod2.webp"
           alt="eating popcorn gif"
         />
@@ -25,13 +29,16 @@ export function Details({ activeMovie, screenings }) {
   }
 
   const sortedScreenings = screenings.sort((a, b) => a.start_time.localeCompare(b.start_time));
+  const activeScreening = sortedScreenings.find(
+    (screening) => screening.id === activeScreeningId
+  );
 
   return (
-    <div>
-      <div className="flex pt-10 p-2 border-3">
+    <div className="pl-5">
+      <div className="flex pt-10 p-2">
         <div className="w-1/3">
           <img
-            className="h-120 w-full object-cover border-5 border-black rounded-[20px]"
+            className="h-120 w-full object-cover border-3 border-purple-900 rounded-tr-[42px] rounded-bl-[42px]"
             src={`/images/${activeMovie.image}`}
             alt={`${activeMovie.title}`}
           />
@@ -57,9 +64,9 @@ export function Details({ activeMovie, screenings }) {
           </div>
         </div>
       </div >
-      <div className="flex">
-        <SeatSelector activeMovie={activeMovie} activeScreeningId={activeScreeningId} sortedScreenings={sortedScreenings} reservedSeats={reservedSeats} setReservedSeats={setReservedSeats}/>
-        <TicketSelector totalReservedSeats={reservedSeats.length} reservedSeats={reservedSeats} />
+      <div className="flex mt-3">
+        <SeatSelector activeMovie={activeMovie} activeScreeningId={activeScreeningId} activeScreening={activeScreening} reservedSeats={reservedSeats} setReservedSeats={setReservedSeats}/>
+        <TicketSelector totalReservedSeats={reservedSeats.length} reservedSeats={reservedSeats} activeScreening={activeScreening} activeDay={activeDay} activeMovie={activeMovie}/>
       </div>
     </div>
   );
