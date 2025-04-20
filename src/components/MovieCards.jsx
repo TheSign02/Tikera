@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export function MovieCards({ movies, activeDay, activeCard, setActiveCard }) {
   useEffect(() => {
@@ -14,10 +14,10 @@ export function MovieCards({ movies, activeDay, activeCard, setActiveCard }) {
               (screening) => screening.weekday === activeDay
             )
           )
-          .map((movie, index) => {
+          .map((movie) => {
             return (
               <div
-                key={index}
+                key={movie.id}
                 onClick={() => setActiveCard(movie.id)}
                 className={`w-45 h-90 flex flex-col items-center bg-black border-3 border-purple-900 rounded-tr-[40px] rounded-bl-[32px]
                m-2 transition-all duration-300 ease-in-out hover:bg-purple-900 hover:scale-115 shadow-2xl select-none mt-5 hover:cursor-pointer

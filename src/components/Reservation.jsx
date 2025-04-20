@@ -25,7 +25,7 @@ export function Reservation({
         <div className="mt-5 flex justify-around">
           {selectedTickets.map((ticket) => {
             return ticket.amount !== 0 ? (
-              <div>
+              <div key={ticket.id}>
                 <p>
                   {ticket.amount} x {ticket.type}
                 </p>

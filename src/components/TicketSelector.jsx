@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Reservation } from "./Reservation";
 
 export function TicketSelector({
@@ -15,12 +15,16 @@ export function TicketSelector({
   ticketTypes,
   handleReserve,
 }) {
+  useEffect(() => {
+    setSelectedTickets(ticketTypes);
+  }, [totalReservedSeats]);
+  
   if (!activeScreening) {
-    return;
+    return null;
   }
 
   if (totalReservedSeats === 0) {
-    return <h1 className="p-20 w-4/10">Please pick your seat(s).</h1>;
+    return <h1 className="p-10 h-1/2 w-1/3 ml-5 border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px]">Please pick your seat(s).</h1>;
   }
 
   const totalPrice = selectedTickets.reduce(
@@ -32,10 +36,6 @@ export function TicketSelector({
     (sum, ticket) => sum + ticket.amount,
     0
   );
-
-  useEffect(() => {
-    setSelectedTickets(ticketTypes);
-  }, [totalReservedSeats]);
 
   function ticketChangeHandler(id, action) {
     setSelectedTickets((prevTickets) =>
@@ -54,22 +54,22 @@ export function TicketSelector({
   }
 
   return (
-    <div className="w-1/3 ml-5 ">
+    <div className="w-1/3 ml-5">
       {/* Tickets */}
-      <div className="border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] p-5">
+      <div className={`border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] p-5 ${totalTickets === 0 ? "animate-pulse hover:animate-none" : ""}`}>
         {selectedTickets.map((ticket) => {
           return (
-            <div className="flex justify-between pb-2" key={ticket.id}>
+            <div className={`flex justify-between pb-2 `} key={ticket.id}>
               <div className="text-lg">
                 {ticket.type}
                 <div className="text-xs">{ticket.price} Ft</div>
               </div>
               <div className="grid grid-cols-3 gap-4 text-3xl">
                 <p
-                  className={`border-2 border-purple-900 p-1 pl-3 pr-3 rounded-tr-2xl rounded-bl-2xl text-center ${
+                  className={`border-2 border-purple-900 p-1 pl-3 pr-3 rounded-tr-2xl rounded-bl-2xl text-center transition-all duration-200 ease-in-out ${
                     ticket.amount === 0
-                      ? "hover:cursor-not-allowed"
-                      : "hover:cursor-pointer hover:bg-purple-900"
+                      ? "hover:cursor-not-allowed opacity-60"
+                      : "hover:cursor-pointer hover:bg-purple-900 hover:scale-110"
                   }`}
                   onClick={() =>
                     ticket.amount !== 0 && ticketChangeHandler(ticket.id, "-")
@@ -79,10 +79,10 @@ export function TicketSelector({
                 </p>
                 <p className="flex text-center m-auto">{ticket.amount}</p>
                 <p
-                  className={`border-2 border-purple-900 p-1 pl-3 pr-3 rounded-tr-2xl rounded-bl-2xl text-center ${
+                  className={`border-2 border-purple-900 p-1 pl-3 pr-3 rounded-tr-2xl rounded-bl-2xl text-center transition-all duration-200 ease-in-out ${
                     totalTickets < totalReservedSeats
-                      ? "hover:cursor-pointer hover:bg-purple-900"
-                      : "hover:cursor-not-allowed"
+                      ? "hover:cursor-pointer hover:bg-purple-900 hover:scale-110"
+                      : "hover:cursor-not-allowed opacity-60"
                   }`}
                   onClick={() =>
                     totalTickets < totalReservedSeats &&
@@ -101,13 +101,12 @@ export function TicketSelector({
             <p>{totalPrice} Ft</p>
           </div>
           <div
-            className={`flex w-1/2 items-center justify-center border-2 border-purple-900 rounded-tr-2xl rounded-bl-2xl ${
+            className={`flex w-1/2 items-center justify-center border-2 border-purple-900 rounded-tr-2xl rounded-bl-2xl transition-all duration-200 ease-in-out ${
               totalTickets === totalReservedSeats
-                ? "hover:cursor-pointer hover:bg-purple-900"
-                : "hover:cursor-not-allowed"
+                ? "hover:cursor-pointer hover:bg-purple-900 hover:scale-110"
+                : "hover:cursor-not-allowed opacity-60"
             }`}
             onClick={() => {
-              if (totalTickets === totalReservedSeats) {
                 // Update the movies state to mark seats as reserved
                 setMovies((prevMovies) =>
                   prevMovies.map((movie) =>
@@ -137,12 +136,12 @@ export function TicketSelector({
                 handleReserve();
 
                 // Delay state reset to allow modal to render with current data
-                setReservedSeats([]);
-                setSelectedTickets(ticketTypes);
-              } else {
-                console.log("Total tickets do not match total reserved seats.");
+                setTimeout(() => {
+                  setReservedSeats([]);
+                  setSelectedTickets(ticketTypes);
+                }, 50);
               }
-            }}
+            }
           >
             <p>Reserve</p>
           </div>

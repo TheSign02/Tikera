@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { Reservation } from "./Reservation";
 
 export function Details({ activeDay, activeMovie, screenings, setMovies }) {
-  const [activeScreeningId, setactiveScreeningId] = useState();
+  const [activeScreeningId, setActiveScreeningId] = useState();
   const [reservedSeats, setReservedSeats] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const ticketTypes = [
@@ -17,7 +17,7 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
   const [modalData, setModalData] = useState([]);
 
   useEffect(() => {
-    setactiveScreeningId(null);
+    setActiveScreeningId(null);
     setReservedSeats([]);
   }, [activeMovie]);
 
@@ -27,7 +27,7 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
 
   if (!activeMovie) {
     return (
-      <div className="flex flex-col items-center ">
+      <div className="flex flex-col items-center transition-all duration-200 ease-in-out">
         <h1 className="pt-30 pb-20">Please pick a movie 🍿</h1>
         <img
           className="w-130 h-100 object-cover border-4 border-purple-900 rounded-tr-[60px] rounded-bl-[60px]"
@@ -38,7 +38,7 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
     );
   }
 
-  const sortedScreenings = screenings.sort((a, b) =>
+  const sortedScreenings = [...screenings].sort((a, b) =>
     a.start_time.localeCompare(b.start_time)
   );
   const activeScreening = sortedScreenings.find(
@@ -56,7 +56,6 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
       selectedTickets,
     };
 
-    console.log("Setting modalData:", data); // Debug modalData
     setModalData(data);
 
     // Open the modal
@@ -72,7 +71,7 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
 
   return (
     <div className="pl-5">
-      <div className="flex pt-10 p-2">
+      <div className="flex pt-10">
         <div className="w-1/3">
           <img
             className="h-120 w-full object-cover border-3 border-purple-900 rounded-tr-[42px] rounded-bl-[42px]"
@@ -90,21 +89,21 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
             <p className="pl-3 pb-3">{activeMovie.description}</p>
           </div>
           <div className="flex gap-2 flex-wrap pl-3 w-3/4">
-            {sortedScreenings.map((screening, index) => (
+            {sortedScreenings.map((screening) => (
               <p
-                key={index}
+                key={screening.id}
                 onClick={() =>
                   screening.room.rows * screening.room.seatsPerRow ===
                   screening.bookings.length
                     ? ""
-                    : setactiveScreeningId(screening.id)
+                    : setActiveScreeningId(screening.id)
                 }
                 className={`p-3 border-2 border-purple-900 rounded-tr-xl rounded-bl-xl
                   transition-all duration-150 ease-in-out select-none mt-2
                   ${
                     screening.room.rows * screening.room.seatsPerRow ===
                     screening.bookings.length
-                      ? "hover:cursor-not-allowed"
+                      ? "hover:cursor-not-allowed opacity-60"
                       : `hover:cursor-pointer hover:bg-purple-900 hover:scale-115 ${
                           activeScreeningId === screening.id
                             ? "text-white bg-purple-900"
@@ -146,11 +145,11 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
       {isModalOpen &&
         createPortal(
           <div className="modal-background fixed inset-0 bg-black flex items-center justify-center">
-            <div className="modal-content max-h-[80vh] w-[40vw] overflow-y-auto bg-black p-5 rounded-lg shadow-lgmax-h-10 flex flex-col gap-5">
+            <div className="modal-content max-h-[80vh] w-[40vw] overflow-y-auto p-5 rounded-lg shadow-lgmax-h-10 flex flex-col gap-5">
               <Reservation {...modalData} />
               <div className="flex justify-center text-center">
                 <p
-                  className="bg-purple-900 text-white px-4 py-2 rounded hover:bg-purple-700 hover:cursor-pointer w-[20%] rounded-tr-[10px] rounded-bl-[10px]"
+                  className="border-2 border-purple-900 text-white px-4 py-2 rounded bg-black hover:bg-purple-900 hover:cursor-pointer w-[20%] rounded-tr-[10px] rounded-bl-[10px] hover:scale-110 transition-all duration-200 ease-in-out"
                   onClick={handleCloseModal}
                 >
                   Close

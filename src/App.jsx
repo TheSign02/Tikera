@@ -1,4 +1,4 @@
-import { act, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import moviesData from "./assets/movies.json";
 import { MovieCards } from "./components/MovieCards";

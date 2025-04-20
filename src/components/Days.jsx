@@ -2,10 +2,10 @@ export function Days({activeDay, setActiveDay, days}) {
 
   return (
     <div className="ml-60 flex gap-2.5 items-center text-center text-xl border-2 border-purple-900 rounded-tr-2xl rounded-bl-2xl bg-black p-3">
-      {days.map((day, index) => {
+      {days.map((day) => {
         return (
           <p
-            key={index}
+            key={day}
             onClick={() => {
                 setActiveDay(day);
             }}

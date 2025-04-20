@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export function SeatSelector({
   activeScreeningId,
   activeScreening,
@@ -7,7 +5,7 @@ export function SeatSelector({
   setReservedSeats,
 }) {
   if (!activeScreeningId) {
-    return <h1 className="p-20">Please pick a time.</h1>;
+    return <h1 className="p-20 border-2 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] m-10">Please pick a time.</h1>;
   }
 
   if (!activeScreening) {
@@ -79,7 +77,7 @@ export function SeatSelector({
         </div>
       </div>
       {seatMatrix.map((row, rowIndex) => (
-        <div key={rowIndex} className="seat-row flex p-1 gap-2">
+        <div key={`row-${rowIndex}`} className="seat-row flex p-1 gap-2">
           {row.map((seat, seatIndex) => {
             const seatId = [rowIndex + 1, seatIndex + 1];
             const isReserved = reservedSeats.some(
@@ -89,9 +87,8 @@ export function SeatSelector({
             const isOccupied = seat === 1;
 
             return (
-              <div>
+              <div key={seatId}>
                 <img
-                  key={seatId}
                   src="images/seat-icon.png"
                   alt={`Seat ${rowIndex + 1}-${seatIndex + 1}`}
                   className={`h-13 transition-all duration-50 ${
