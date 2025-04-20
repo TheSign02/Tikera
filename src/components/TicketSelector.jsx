@@ -24,7 +24,7 @@ export function TicketSelector({
   }
 
   if (totalReservedSeats === 0) {
-    return <h1 className="p-10 h-1/2 w-1/3 ml-5 border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px]">Please pick your seat(s).</h1>;
+    return <h1 className="p-10 h-1/2 w-1/3 ml-5 border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] animate-pulse">Please pick your seat(s).</h1>;
   }
 
   const totalPrice = selectedTickets.reduce(
