@@ -93,14 +93,24 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
             {sortedScreenings.map((screening, index) => (
               <p
                 key={index}
-                onClick={() => setactiveScreeningId(screening.id)}
-                className={`p-3 border-2 border-purple-900 hover:bg-purple-900 hover:cursor-pointer rounded-tr-xl rounded-bl-xl
-                transition-all duration-150 ease-in-out select-none mt-2 hover:scale-115
-                ${
-                  activeScreeningId === screening.id
-                    ? " text-white bg-purple-900"
-                    : "bg-black"
-                }`}
+                onClick={() =>
+                  screening.room.rows * screening.room.seatsPerRow ===
+                  screening.bookings.length
+                    ? ""
+                    : setactiveScreeningId(screening.id)
+                }
+                className={`p-3 border-2 border-purple-900 rounded-tr-xl rounded-bl-xl
+                  transition-all duration-150 ease-in-out select-none mt-2
+                  ${
+                    screening.room.rows * screening.room.seatsPerRow ===
+                    screening.bookings.length
+                      ? "hover:cursor-not-allowed"
+                      : `hover:cursor-pointer hover:bg-purple-900 hover:scale-115 ${
+                          activeScreeningId === screening.id
+                            ? "text-white bg-purple-900"
+                            : "bg-black"
+                        }`
+                  }`}
               >
                 {screening.start_time}
               </p>
@@ -135,15 +145,17 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
       {/* Reservation Modal */}
       {isModalOpen &&
         createPortal(
-          <div className="modal-background fixed inset-0 bg-black flex flex-col items-center justify-center z-50 gap-5 overflow-scroll">
-            <Reservation {...modalData} />
-            <div>
-              <p
-                className="bg-purple-900 text-white px-4 py-2 rounded hover:bg-purple-700 hover:cursor-pointer"
-                onClick={handleCloseModal}
-              >
-                Close
-              </p>
+          <div className="modal-background fixed inset-0 bg-black flex items-center justify-center">
+            <div className="modal-content max-h-[80vh] w-[40vw] overflow-y-auto bg-black p-5 rounded-lg shadow-lgmax-h-10 flex flex-col gap-5">
+              <Reservation {...modalData} />
+              <div className="flex justify-center text-center">
+                <p
+                  className="bg-purple-900 text-white px-4 py-2 rounded hover:bg-purple-700 hover:cursor-pointer w-[20%] rounded-tr-[10px] rounded-bl-[10px]"
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </p>
+              </div>
             </div>
           </div>,
           document.body
