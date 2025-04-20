@@ -13,6 +13,7 @@ export function TicketSelector({
   selectedTickets,
   setSelectedTickets,
   ticketTypes,
+  handleReserve,
 }) {
   if (!activeScreening) {
     return;
@@ -108,40 +109,36 @@ export function TicketSelector({
             onClick={() => {
               if (totalTickets === totalReservedSeats) {
                 // Update the movies state to mark seats as reserved
-                setTimeout(() => {
-                  setMovies((prevMovies) =>
-                    prevMovies.map((movie) =>
-                      movie.id === activeMovie.id
-                  ? {
-                        ...movie,
-                        screenings: movie.screenings.map((screening) =>
-                          screening.id === activeScreening.id
-                        ? {
-                          ...screening,
-                          bookings: [
-                            ...screening.bookings,
-                            ...reservedSeats.map(([row, seat]) => ({
-                              row,
-                              seat,
-                            })),
-                          ],
-                        }
+                setMovies((prevMovies) =>
+                  prevMovies.map((movie) =>
+                    movie.id === activeMovie.id
+                      ? {
+                          ...movie,
+                          screenings: movie.screenings.map((screening) =>
+                            screening.id === activeScreening.id
+                              ? {
+                                  ...screening,
+                                  bookings: [
+                                    ...screening.bookings,
+                                    ...reservedSeats.map(([row, seat]) => ({
+                                      row,
+                                      seat,
+                                    })),
+                                  ],
+                                }
                               : screening
                           ),
                         }
-                        : movie
-                    )
-                  );
-                }, 3000)
+                      : movie
+                  )
+                );
 
                 // Open the modal
-                setIsModalOpen(true);
+                handleReserve();
 
                 // Delay state reset to allow modal to render with current data
-                setTimeout(() => {
-                  setReservedSeats([]);
-                  setSelectedTickets(ticketTypes);
-                }, 3000);
+                setReservedSeats([]);
+                setSelectedTickets(ticketTypes);
               } else {
                 console.log("Total tickets do not match total reserved seats.");
               }

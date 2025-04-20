@@ -14,6 +14,7 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
     { id: 2, type: "Senior", price: 1790, amount: 0 },
   ];
   const [selectedTickets, setSelectedTickets] = useState(ticketTypes);
+  const [modalData, setModalData] = useState([]);
 
   useEffect(() => {
     setactiveScreeningId(null);
@@ -43,6 +44,31 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
   const activeScreening = sortedScreenings.find(
     (screening) => screening.id === activeScreeningId
   );
+
+  const handleReserve = () => {
+    // Save the reservation data for the modal
+    const data = {
+      totalReservedSeats: reservedSeats.length,
+      reservedSeats,
+      activeScreening,
+      activeDay,
+      activeMovie,
+      selectedTickets,
+    };
+
+    console.log("Setting modalData:", data); // Debug modalData
+    setModalData(data);
+
+    // Open the modal
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Close the modal
+    setModalData(null); // Clear modal data
+    setReservedSeats([]); // Reset reserved seats
+    setSelectedTickets(ticketTypes); // Reset ticket selection
+  };
 
   return (
     <div className="pl-5">
@@ -103,26 +129,18 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
           selectedTickets={selectedTickets}
           setSelectedTickets={setSelectedTickets}
           ticketTypes={ticketTypes}
+          handleReserve={handleReserve}
         />
       </div>
       {/* Reservation Modal */}
       {isModalOpen &&
         createPortal(
-          <div
-            className="modal-background fixed inset-0 bg-black flex flex-col items-center justify-center z-50 gap-5"
-          >
-            <Reservation
-              totalReservedSeats={reservedSeats.length}
-              reservedSeats={reservedSeats}
-              activeScreening={activeScreening}
-              activeDay={activeDay}
-              activeMovie={activeMovie}
-              selectedTickets={selectedTickets}
-            />
+          <div className="modal-background fixed inset-0 bg-black flex flex-col items-center justify-center z-50 gap-5 overflow-scroll">
+            <Reservation {...modalData} />
             <div>
               <p
                 className="bg-purple-900 text-white px-4 py-2 rounded hover:bg-purple-700 hover:cursor-pointer"
-                onClick={() => setIsModalOpen(false)}
+                onClick={handleCloseModal}
               >
                 Close
               </p>
