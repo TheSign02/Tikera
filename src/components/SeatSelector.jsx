@@ -5,7 +5,7 @@ export function SeatSelector({
   setReservedSeats,
 }) {
   if (!activeScreeningId) {
-    return <h1 className="p-20 border-2 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] m-10 animate-pulse">Please pick a time.</h1>;
+    return <h1 className="p-20 border-2 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] m-10 animate-pulse">Please pick a screening time.</h1>;
   }
 
   if (!activeScreening) {
