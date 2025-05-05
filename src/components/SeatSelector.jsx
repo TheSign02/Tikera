@@ -87,7 +87,7 @@ export function SeatSelector({
             const isOccupied = seat === 1;
 
             return (
-              <div key={seatId}>
+              <button key={seatId}>
                 <img
                   src="images/seat-icon.png"
                   alt={`Seat ${rowIndex + 1}-${seatIndex + 1}`}
@@ -103,7 +103,7 @@ export function SeatSelector({
                     !isOccupied && seatClickHandler(rowIndex + 1, seatIndex + 1)
                   }
                 />
-              </div>
+              </button>
             );
           })}
         </div>

@@ -9,7 +9,6 @@ export function TicketSelector({
   activeMovie,
   setMovies,
   setReservedSeats,
-  setIsModalOpen,
   selectedTickets,
   setSelectedTickets,
   ticketTypes,
@@ -18,13 +17,17 @@ export function TicketSelector({
   useEffect(() => {
     setSelectedTickets(ticketTypes);
   }, [totalReservedSeats]);
-  
+
   if (!activeScreening) {
     return null;
   }
 
   if (totalReservedSeats === 0) {
-    return <h1 className="p-10 h-1/2 w-1/3 ml-5 border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] animate-pulse">Please pick your seat(s).</h1>;
+    return (
+      <h1 className="p-10 h-1/2 w-1/3 ml-5 border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] animate-pulse">
+        Please pick your seat(s).
+      </h1>
+    );
   }
 
   const totalPrice = selectedTickets.reduce(
@@ -56,16 +59,20 @@ export function TicketSelector({
   return (
     <div className="w-1/3 ml-5">
       {/* Tickets */}
-      <div className={`border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] p-5 ${totalTickets === 0 ? "animate-pulse hover:animate-none" : ""}`}>
+      <div
+        className={`border-3 border-purple-900 rounded-tr-[32px] rounded-bl-[32px] p-5 ${
+          totalTickets === 0 ? "animate-pulse hover:animate-none" : ""
+        }`}
+      >
         {selectedTickets.map((ticket) => {
           return (
-            <div className={`flex justify-between pb-2 `} key={ticket.id}>
+            <div className={`flex justify-between pb-2`} key={ticket.id}>
               <div className="text-lg">
                 {ticket.type}
                 <div className="text-xs">{ticket.price} Ft</div>
               </div>
               <div className="grid grid-cols-3 gap-4 text-3xl">
-                <p
+                <button
                   className={`border-2 border-purple-900 p-1 pl-3 pr-3 rounded-tr-2xl rounded-bl-2xl text-center transition-all duration-200 ease-in-out ${
                     ticket.amount === 0
                       ? "hover:cursor-not-allowed opacity-60"
@@ -76,9 +83,9 @@ export function TicketSelector({
                   }
                 >
                   -
-                </p>
+                </button>
                 <p className="flex text-center m-auto">{ticket.amount}</p>
-                <p
+                <button
                   className={`border-2 border-purple-900 p-1 pl-3 pr-3 rounded-tr-2xl rounded-bl-2xl text-center transition-all duration-200 ease-in-out ${
                     totalTickets < totalReservedSeats
                       ? "hover:cursor-pointer hover:bg-purple-900 hover:scale-110"
@@ -90,7 +97,7 @@ export function TicketSelector({
                   }
                 >
                   +
-                </p>
+                </button>
               </div>
             </div>
           );
@@ -100,13 +107,14 @@ export function TicketSelector({
             <p className="">Total Price:</p>
             <p>{totalPrice} Ft</p>
           </div>
-          <div
+          <button
             className={`flex w-1/2 items-center justify-center border-2 border-purple-900 rounded-tr-2xl rounded-bl-2xl transition-all duration-200 ease-in-out ${
               totalTickets === totalReservedSeats
                 ? "hover:cursor-pointer hover:bg-purple-900 hover:scale-110"
                 : "hover:cursor-not-allowed opacity-60"
             }`}
             onClick={() => {
+              if (totalTickets === totalReservedSeats) {
                 // Update the movies state to mark seats as reserved
                 setMovies((prevMovies) =>
                   prevMovies.map((movie) =>
@@ -141,10 +149,10 @@ export function TicketSelector({
                   setSelectedTickets(ticketTypes);
                 }, 50);
               }
-            }
+            }}
           >
             <p>Reserve</p>
-          </div>
+          </button>
         </div>
       </div>
 

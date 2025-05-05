@@ -90,7 +90,7 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
           </div>
           <div className="flex gap-2 flex-wrap pl-3 w-3/4">
             {sortedScreenings.map((screening) => (
-              <p
+              <button
                 key={screening.id}
                 onClick={() =>
                   screening.room.rows * screening.room.seatsPerRow ===
@@ -112,7 +112,7 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
                   }`}
               >
                 {screening.start_time}
-              </p>
+              </button>
             ))}
           </div>
         </div>
@@ -148,12 +148,12 @@ export function Details({ activeDay, activeMovie, screenings, setMovies }) {
             <div className="modal-content max-h-[80vh] w-[40vw] overflow-y-auto p-5 rounded-lg shadow-lgmax-h-10 flex flex-col gap-5">
               <Reservation {...modalData} />
               <div className="flex justify-center text-center">
-                <p
+                <button
                   className="border-2 border-purple-900 text-white px-4 py-2 rounded bg-black hover:bg-purple-900 hover:cursor-pointer w-[20%] rounded-tr-[10px] rounded-bl-[10px] hover:scale-110 transition-all duration-200 ease-in-out"
                   onClick={handleCloseModal}
                 >
                   Close
-                </p>
+                </button>
               </div>
             </div>
           </div>,

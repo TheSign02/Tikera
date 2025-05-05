@@ -4,7 +4,7 @@ export function Days({activeDay, setActiveDay, days}) {
     <div className="ml-60 flex gap-2.5 items-center text-center text-xl border-2 border-purple-900 rounded-tr-2xl rounded-bl-2xl bg-black p-3">
       {days.map((day) => {
         return (
-          <p
+          <button
             key={day}
             onClick={() => {
                 setActiveDay(day);
@@ -14,7 +14,7 @@ export function Days({activeDay, setActiveDay, days}) {
           ${activeDay === day ? " bg-purple-900" : ""}`}
           >
             {day}
-          </p>
+          </button>
         );
       })}
     </div>

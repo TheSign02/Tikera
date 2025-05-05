@@ -16,7 +16,7 @@ export function MovieCards({ movies, activeDay, activeCard, setActiveCard }) {
           )
           .map((movie) => {
             return (
-              <div
+              <button
                 key={movie.id}
                 onClick={() => setActiveCard(movie.id)}
                 className={`w-45 h-90 flex flex-col items-center bg-black border-3 border-purple-900 rounded-tr-[40px] rounded-bl-[32px]
@@ -40,7 +40,7 @@ export function MovieCards({ movies, activeDay, activeCard, setActiveCard }) {
                   <p>{movie.genre}</p>
                   <p>{movie.duration} minutes</p>
                 </div>
-              </div>
+              </button>
             );
           })}
       </div>
